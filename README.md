@@ -27,3 +27,21 @@ export default TurboModuleRegistry.get<Spec>("NativeLocalStorage") as Spec | nul
 
 > [!Note]
 > The spec file for Turbo Native Modules must have the prefix `Native` to work properly.
+
+## 2. Configure Codegen
+
+1. Open the `package.json` file
+2. Add the `codegenConfig` field as it follows
+
+```diff
+   "packageManager": "yarn@3.6.4",
++   "codegenConfig": {
++      "name": "NativeLocalStorage",
++      "type": "modules",
++      "jsSrcsDir": "specs",
++      "android": {
++         "javaPackageName": "com.nativelocalstorage"
++      }
++   }
+}
+```

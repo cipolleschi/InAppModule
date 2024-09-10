@@ -48,6 +48,124 @@ export default TurboModuleRegistry.get<Spec>("NativeLocalStorage") as Spec | nul
 
 ## 3. Implement the Native Code
 
+### Android:
+
+1. In the folder path `android/app/src/main/java/com`, create a new folder `nativelocalstorage`
+2. Create a new file `NativeLocalStorageModule.kt`
+3. Modify the `NativeLocalStorageModule.kt` with the following code:
+```kt
+package com.nativelocalstorage
+
+import android.content.Context
+import android.content.SharedPreferences
+import com.nativelocalstorage.NativeLocalStorageSpec
+import com.facebook.react.bridge.ReactApplicationContext
+
+class NativeLocalStorageModule(reactContext: ReactApplicationContext) : NativeLocalStorageSpec(reactContext) {
+
+  override fun getName() = NAME
+
+  override fun setString(value: String, key: String) {
+    val sharedPref = getReactApplicationContext().getSharedPreferences("my_prefs", Context.MODE_PRIVATE)
+    val editor = sharedPref.edit()
+    editor.putString(key, value)
+    editor.apply()
+  }
+
+  override fun getString(key: String): String {
+    val sharedPref = getReactApplicationContext().getSharedPreferences("my_prefs", Context.MODE_PRIVATE)
+    val username = sharedPref.getString(key, "")
+    return username.toString()
+  }
+
+  companion object {
+    const val NAME = "NativeLocalStorage"
+  }
+}
+```
+4. In the same folder, create a new file `NativeLocalStoragePackage.kt`.
+5. Modify the new file with the following code:
+```kt
+package com.nativelocalstorage;
+
+import com.facebook.react.TurboReactPackage
+import com.facebook.react.bridge.NativeModule
+import com.facebook.react.bridge.ReactApplicationContext
+import com.facebook.react.module.model.ReactModuleInfo
+import com.facebook.react.module.model.ReactModuleInfoProvider
+
+class NativeLocalStoragePackage : TurboReactPackage() {
+
+  override fun getModule(name: String, reactContext: ReactApplicationContext): NativeModule? =
+    if (name == NativeLocalStorageModule.NAME) {
+      NativeLocalStorageModule(reactContext)
+    } else {
+      null
+    }
+
+  override fun getReactModuleInfoProvider() = ReactModuleInfoProvider {
+    mapOf(
+      NativeLocalStorageModule.NAME to ReactModuleInfo(
+        NativeLocalStorageModule.NAME,
+        NativeLocalStorageModule.NAME,
+        false, // canOverrideExistingModule
+        false, // needsEagerInit
+        false, // isCxxModule
+        true // isTurboModule
+      )
+    )
+  }
+}
+```
+6. in the path `android/app/src/main/java/com/inappmodule`, open the `MainApplication.kt` file and adds the following lines:
+```diff
+package com.inappmodule
+
+import android.app.Application
+import com.facebook.react.PackageList
+import com.facebook.react.ReactApplication
+import com.facebook.react.ReactHost
+import com.facebook.react.ReactNativeHost
+import com.facebook.react.ReactPackage
+import com.facebook.react.defaults.DefaultNewArchitectureEntryPoint.load
+import com.facebook.react.defaults.DefaultReactHost.getDefaultReactHost
+import com.facebook.react.defaults.DefaultReactNativeHost
+import com.facebook.soloader.SoLoader
++ import com.nativelocalstorage.NativeLocalStoragePackage
+
+class MainApplication : Application(), ReactApplication {
+
+  override val reactNativeHost: ReactNativeHost =
+      object : DefaultReactNativeHost(this) {
+        override fun getPackages(): List<ReactPackage> =
+            PackageList(this).packages.apply {
+              // Packages that cannot be autolinked yet can be added manually here, for example:
+              // add(MyReactNativePackage())
++              add(NativeLocalStoragePackage())
+            }
+
+        override fun getJSMainModuleName(): String = "index"
+
+        override fun getUseDeveloperSupport(): Boolean = BuildConfig.DEBUG
+
+        override val isNewArchEnabled: Boolean = BuildConfig.IS_NEW_ARCHITECTURE_ENABLED
+        override val isHermesEnabled: Boolean = BuildConfig.IS_HERMES_ENABLED
+      }
+
+  override val reactHost: ReactHost
+    get() = getDefaultReactHost(applicationContext, reactNativeHost)
+
+  override fun onCreate() {
+    super.onCreate()
+    SoLoader.init(this, false)
+    if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
+      // If you opted-in for the New Architecture, we load the native entry point for this app.
+      load()
+    }
+  }
+}
+```
+
 ### iOS:
 
 1. Run `yarn install` in the root folder of your project.

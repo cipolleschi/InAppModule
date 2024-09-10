@@ -36,7 +36,7 @@ export default TurboModuleRegistry.get<Spec>("NativeLocalStorage") as Spec | nul
 ```diff
    "packageManager": "yarn@3.6.4",
 +   "codegenConfig": {
-+      "name": "NativeLocalStorage",
++      "name": "NativeLocalStorageSpec",
 +      "type": "modules",
 +      "jsSrcsDir": "specs",
 +      "android": {

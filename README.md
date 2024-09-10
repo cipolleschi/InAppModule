@@ -305,3 +305,9 @@ const styles = StyleSheet.create({
 
 export default App;
 ```
+
+This is the resulting app
+
+| Android | iOS |
+| :--- | ---: |
+| ![Android](android.mov) | ![iOS](ios.mov) |

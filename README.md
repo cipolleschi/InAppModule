@@ -310,4 +310,4 @@ This is the resulting app
 
 | Android | iOS |
 | :--- | ---: |
-| ![Android](android.mov) | ![iOS](ios.mov) |
+| [![Android](https://raw.githubusercontent.com/cipolleschi/inappmodule/main/android.png)](https://raw.githubusercontent.com/cipolleschi/inappmodule/main/android.mp4) | [![iOS](https://raw.githubusercontent.com/cipolleschi/inappmodule/main/ios.png)](https://raw.githubusercontent.com/cipolleschi/inappmodule/main/android.mp4) |
